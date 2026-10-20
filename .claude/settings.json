@@ -1,0 +1,48 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .agent-memory/bin/memory.py start --agent claude-code --hook",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .agent-memory/bin/memory.py checkpoint --agent claude-code --quiet",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .agent-memory/bin/memory.py checkpoint --agent claude-code --quiet",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .agent-memory/bin/memory.py end --agent claude-code --auto",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
