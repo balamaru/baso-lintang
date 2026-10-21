@@ -1,0 +1,74 @@
+{{define "page"}}<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{.Title}}</title>
+{{if eq .Kind "submission"}}<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>{{end}}
+</head><body>
+<header><nav aria-label="Navigasi utama"><a href="/">Kamus Bahasa Lintang</a> · <a href="/daftar">Daftar kata</a> · <a href="/kirim">Kirim kata</a>
+{{if .User.ID}} · <a href="/admin/antrean">Antrean</a>{{if eq .User.Role "admin"}} · <a href="/admin/pengguna">Pengguna</a>{{end}}
+<form method="post" action="/admin/logout"><input type="hidden" name="csrf" value="{{.CSRF}}"><button>Keluar</button></form>{{end}}</nav></header>
+<main><h1>{{.Title}}</h1>
+{{if .Error}}<p role="alert">{{.Error}}</p>{{end}}
+{{if .Message}}<p role="status">{{.Message}}</p>{{end}}
+{{if eq .Kind "search"}}
+<p>Cari kata yang telah ditinjau oleh tim verifikator.</p>
+<form action="/cari"><label>Kata atau arti <input name="q" value="{{.Form.Get "q"}}" maxlength="1000"></label>
+<label>Arah <select name="arah"><option value="semua">Dua arah</option><option value="lintang" {{if eq (.Form.Get "arah") "lintang"}}selected{{end}}>Lintang ke Indonesia</option><option value="indonesia" {{if eq (.Form.Get "arah") "indonesia"}}selected{{end}}>Indonesia ke Lintang</option></select></label><button>Cari</button></form>
+{{template "results" .}}
+{{else if eq .Kind "list"}}{{template "results" .}}
+{{else if eq .Kind "detail"}}
+<p>Terverifikasi</p>
+<p>Ejaan: {{range .Data.Spellings}}{{.Form}}; {{end}}</p>
+{{range .Data.Senses}}<section><h2>{{.GlossID}}</h2><p>{{.Pos}}</p><p>{{.Explanation}}</p></section>{{end}}
+{{range .Data.Examples}}<blockquote>{{.TextLintang}}<p>{{.TextID}}</p></blockquote>{{end}}
+{{if .Data.Credits}}<p>Penyumbang: {{range .Data.Credits}}{{.}}; {{end}}</p>{{end}}
+{{else if eq .Kind "submission"}}
+<p>Kiriman akan ditinjau manusia sebelum masuk ke kamus.</p>
+<form method="post">{{template "content" .}}
+<p><label>Nama panggilan (opsional) <input name="name" maxlength="100" value="{{.Form.Get "name"}}"></label></p>
+<p><label>Kontak (opsional) <input name="contact" maxlength="254" value="{{.Form.Get "contact"}}"></label></p>
+<p><label><input type="checkbox" name="consent" {{if eq (.Form.Get "consent") "on"}}checked{{end}}> Saya bersedia nama saya dicantumkan sebagai penyumbang.</label></p>
+<div hidden><label>Biarkan kosong <input name="website" tabindex="-1" autocomplete="off"></label></div>
+<div class="cf-turnstile" data-sitekey="{{.SiteKey}}"></div><button>Kirim untuk ditinjau</button></form>
+{{else if eq .Kind "login"}}
+<form method="post"><input type="hidden" name="csrf" value="{{.CSRF}}">
+<p><label>Email <input name="email" type="email" autocomplete="username" required maxlength="254"></label></p>
+<p><label>Password <input name="password" type="password" autocomplete="current-password" required maxlength="256"></label></p><button>Masuk</button></form>
+{{else if eq .Kind "invitation"}}
+<form method="post"><input type="hidden" name="csrf" value="{{.CSRF}}"><input type="hidden" name="token" value="{{.Form.Get "token"}}">
+<p><label>Nama <input name="name" required maxlength="100" value="{{.Form.Get "name"}}"></label></p>
+<p><label>Password baru (minimal 12 karakter) <input name="password" type="password" autocomplete="new-password" minlength="12" maxlength="256" required></label></p><button>Aktifkan akun</button></form>
+{{else if eq .Kind "queue"}}
+<form><label>Cari kiriman <input name="q" value="{{.Form.Get "q"}}"></label>
+<label>Status <select name="status"><option value="pending">Menunggu</option><option value="approved">Diterima</option><option value="rejected">Ditolak</option><option value="needs_fix">Perlu perbaikan</option></select></label>
+<label>Urutan <select name="urutan"><option value="lama">Terlama</option><option value="baru">Terbaru</option></select></label><button>Tampilkan</button></form>
+<ul>{{range .Data}}<li><a href="/admin/kiriman/{{.ID}}">{{.Headword}}</a> — {{.GlossID}} ({{.Status}})</li>{{else}}<li>Tidak ada kiriman.</li>{{end}}</ul>
+{{else if eq .Kind "review"}}
+<p>Status: {{.Data.Status}}</p>
+<form method="post"><input type="hidden" name="csrf" value="{{.CSRF}}">{{template "content" .}}
+<p><label>Varian ejaan (pisahkan koma) <input name="variants" value="{{.Form.Get "variants"}}"></label></p>
+<p><label>ID entri tujuan (untuk gabung) <input type="number" name="target" min="1" value="{{.Form.Get "target"}}"></label></p>
+<p><label>Catatan / alasan <textarea name="note" maxlength="1000">{{.Form.Get "note"}}</textarea></label></p>
+<button name="action" value="approve">Terima</button> <button name="action" value="merge">Gabungkan</button>
+<button name="action" value="needs_fix">Minta perbaikan</button> <button name="action" value="reject">Tolak</button>
+{{if eq .Data.Status "needs_fix"}}<button name="action" value="resubmit">Simpan perbaikan dan antrekan kembali</button>{{end}}</form>
+{{else if eq .Kind "users"}}
+<h2>Undang anggota tim</h2>
+<form method="post"><input type="hidden" name="csrf" value="{{.CSRF}}"><input type="hidden" name="action" value="invite">
+<label>Email <input name="email" type="email" maxlength="254" required></label>
+<label>Role <select name="role"><option value="verifier">Verifikator</option><option value="admin">Admin</option></select></label><button>Buat tautan undangan</button></form>
+<h2>Akun tim</h2>
+{{range .Data}}<form method="post"><input type="hidden" name="csrf" value="{{$.CSRF}}"><input type="hidden" name="action" value="update"><input type="hidden" name="id" value="{{.ID}}">
+<p>{{.Name}} ({{.Email}})</p><label>Role <select name="role"><option value="verifier" {{if eq .Role "verifier"}}selected{{end}}>Verifikator</option><option value="admin" {{if eq .Role "admin"}}selected{{end}}>Admin</option></select></label>
+<label><input type="checkbox" name="active" {{if .IsActive}}checked{{end}}> Aktif</label><button>Simpan</button></form>{{end}}
+{{end}}
+{{if .Next}}<p><a href="{{.Next}}">Halaman berikutnya</a></p>{{end}}
+</main></body></html>{{end}}
+
+{{define "results"}}<ul>{{range .Data}}<li><a href="/kata/{{.Slug}}">{{.Headword}}</a> — {{.Gloss}}</li>{{else}}<li>Belum ada kata yang ditemukan.</li>{{end}}</ul>{{end}}
+{{define "content"}}
+<p><label>Kata Lintang <input name="headword" maxlength="60" required value="{{.Form.Get "headword"}}"></label></p>
+<p><label>Arti Indonesia <textarea name="gloss" maxlength="1000" required>{{.Form.Get "gloss"}}</textarea></label></p>
+<p><label>Penjelasan (opsional) <textarea name="explanation" maxlength="1000">{{.Form.Get "explanation"}}</textarea></label></p>
+<p><label>Jenis kata (opsional) <input name="pos" maxlength="60" value="{{.Form.Get "pos"}}"></label></p>
+<p><label>Contoh kalimat (opsional) <textarea name="example_lintang" maxlength="1000">{{.Form.Get "example_lintang"}}</textarea></label></p>
+<p><label>Arti contoh (opsional) <textarea name="example_id" maxlength="1000">{{.Form.Get "example_id"}}</textarea></label></p>
+{{end}}

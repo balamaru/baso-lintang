@@ -138,19 +138,21 @@ Form harus tetap terisi saat ada galat validasi dan harus berfungsi tanpa JavaSc
 
 ## 9. Perintah umum
 
-> Makefile belum ada. Target di bawah adalah **yang direncanakan**; buat jika belum ada dan perbarui bagian ini.
+> Makefile backend tersedia. Prasyarat dan konfigurasi HTTPS lokal ada di README.md.
 
 ```bash
-make dev           # docker-compose up: app + Postgres (+ MinIO)
+make dev           # docker compose: app + migrasi + Postgres
 make migrate-up    # app migrate up
 make migrate-down
 make sqlc          # sqlc generate
 make test          # go test ./...
 make test-int      # tes integrasi (testcontainers-go + Postgres)
-make lint          # go vet + golangci-lint
+make lint          # go vet (golangci-lint belum dikonfigurasi)
 make sec           # gosec + govulncheck
-make css           # build Tailwind
+make build         # build binary Go
 ```
+
+Target CSS belum tersedia; tampilan saat ini form SSR dasar untuk pengujian backend.
 
 Jika ragu perintah mana yang berlaku, baca `Makefile` dan `deploy/docker-compose.yml`, jangan menebak.
 

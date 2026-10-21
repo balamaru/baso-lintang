@@ -1,0 +1,11 @@
+.git
+.env
+.env.*
+.tools
+.cache
+.agent-memory
+.codex
+.claude
+.agents
+docs
+*.exe
