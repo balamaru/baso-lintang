@@ -6,26 +6,54 @@ Belum merupakan persetujuan untuk rilis publik.
 
 ## Menjalankan lokal
 
-Prasyarat: Go 1.27.3, Docker (untuk PostgreSQL dan tes integrasi), reverse proxy HTTPS lokal.
+Prasyarat Compose: Docker Desktop/Engine dengan Compose v2; Python 3 untuk penyiapan
+otomatis (opsional). Go 1.27.3 hanya diperlukan untuk menjalankan alat Go di host.
 
-1. Salin `.env.example` menjadi `.env`. Isi rahasia acak minimal 32 karakter, password database,
-   dan konfigurasi Turnstile. `.env` tidak dimuat otomatis oleh binary; ekspor variabel melalui shell
-   atau gunakan Docker Compose.
-2. Jalankan `docker compose --env-file .env -f deploy/docker-compose.yml up --build`.
-   Migrasi berjalan sebelum aplikasi. Database dan port aplikasi hanya dipublikasikan ke loopback.
-3. Tempatkan reverse proxy HTTPS lokal di depan `127.0.0.1:8080`; samakan origin dengan `BASE_URL`.
-   Cookie selalu `Secure`, termasuk pada pengembangan. Endpoint operasional hanya di listener
-   `OPS_ADDR` (default `127.0.0.1:9090`), tidak dipublikasikan Compose.
-4. Buat admin awal dengan `app admin create --email <email> --name <nama>`, dengan `DATABASE_URL`
-   dan `ADMIN_PASSWORD` pada environment. Pada Compose:
-   `docker compose --env-file .env -f deploy/docker-compose.yml run --rm app admin create --email <email> --name <nama>`.
-   Kosongkan `ADMIN_PASSWORD` setelah pemakaian.
-5. Buka `/admin/login`; admin membuat undangan dari `/admin/pengguna`. Tautan ditampilkan
-   hanya pada respons pembuatan undangan; tidak ada pengiriman email otomatis.
+Jalankan dari root repositori (pada Linux/macOS gunakan `python3` bila diperlukan):
+
+```sh
+python scripts/setup-local.py
+mkdir .cache
+docker compose --env-file .env -f deploy/docker-compose.yml up --build -d --wait
+docker compose --env-file .env -f deploy/docker-compose.yml run --rm admin --email admin@example.invalid --name "Admin uji"
+docker compose --env-file .env -f deploy/docker-compose.yml cp https:/data/caddy/pki/authorities/local/root.crt .cache/local-ca.crt
+```
+
+Lewati `mkdir .cache` jika folder sudah ada.
+Buka **https://localhost:8443**. Untuk browser, impor `.cache/local-ca.crt` ke trust store
+sertifikat pengembangan lokal; untuk curl gunakan `--cacert .cache/local-ca.crt`.
+Caddy menyediakan HTTPS lokal; tidak ada permintaan sertifikat publik atau access log.
+Password admin ada pada `ADMIN_PASSWORD` di `.env`; setelah admin berhasil dibuat dan diuji,
+kosongkan nilai itu. Service aplikasi tidak menerima password bootstrap tersebut.
+Perintah pembuatan admin dijalankan sekali per alamat email.
+
+Skrip setup tidak menimpa `.env`. Jika sudah ada, isi `POSTGRES_PASSWORD` dengan teks
+acak heksadesimal (aman untuk URL database), `SESSION_SECRET` dan `HASH_SALT` minimal
+32 karakter, serta pasangan kunci Turnstile pengembangan. Compose lokal menetapkan
+origin `https://localhost:8443`. Jangan mengganti password PostgreSQL pada volume yang
+sudah berisi data tanpa melakukan rotasi password database secara terencana.
+
+PostgreSQL menyimpan data di named volume; migrasi selesai sebelum backend dimulai,
+dan proxy menunggu backend sehat. Hanya port HTTPS 8443 yang diekspos, ke loopback.
+Endpoint operasional dan database tidak dipublikasikan ke host. Untuk inspeksi SQL:
+`docker compose --env-file .env -f deploy/docker-compose.yml exec db psql -U lintang -d lintang`.
+Untuk status/log gunakan `ps` atau `logs --tail 50 app migrate` dengan prefix Compose yang sama.
+Hentikan dengan `docker compose --env-file .env -f deploy/docker-compose.yml down`;
+volume tetap tersimpan. Jangan memakai `down -v` jika data perlu dipertahankan.
+
+Konfigurasi ini untuk pengembangan lokal. Limiter melihat alamat proxy yang sama
+untuk semua browser lokal; rancangan trusted proxy tetap diperlukan sebelum produksi.
+Backend memerlukan koneksi keluar ke Cloudflare untuk verifikasi CAPTCHA.
+
+Dokumentasi endpoint, payload form, cookie, CSRF, serta alur curl/Postman:
+[API.md](API.md). Semua contoh kosakata adalah placeholder buatan, bukan bahasa Lintang.
 
 Turnstile memerlukan JavaScript ringan dari Cloudflare; seluruh alur form lainnya memakai SSR.
-Gunakan kunci uji resmi Cloudflare pada pengembangan, lalu cocokkan hostname respons verifikasi
-dengan hostname `BASE_URL`. Jangan gunakan kunci uji pada produksi.
+Kunci uji resmi Cloudflare menghasilkan hostname `example.com`, sehingga kiriman lokal dengan
+origin `localhost` ditolak. Untuk menguji kiriman sukses, gunakan hostname uji yang cocok dan
+kunci Turnstile pengembangan yang sesuai. Integrasi browser otomatis menggunakan verifier
+pengganti hanya dalam test dan database sementara; aplikasi tidak punya bypass CAPTCHA lokal.
+Jangan gunakan kunci uji pada produksi.
 
 ## Perintah
 
@@ -73,7 +101,7 @@ Typecheck merupakan bagian dari build Go. Tidak ada golangci-lint yang dikonfigu
   Perubahan aturan sesudah ada data memerlukan reindeks kolom normalized yang terencana.
 - Header forwarding belum dipercaya. Reverse proxy perlu rancangan trusted proxy sebelum produksi,
   agar limiter tidak menganggap seluruh pengguna sebagai IP proxy yang sama.
-- Tampilan adalah form SSR dasar untuk menguji backend. Integrasi visual Tailwind/htmx belum dikerjakan.
+- Tampilan publik dan tim memakai HTML server-rendered, CSS Tailwind statis, serta navigasi mobile ringan.
 - API/ekspor publik, audio, dukungan, revisi, dan dasbor merupakan fase berikutnya.
   Endpoint yang belum diimplementasikan mengembalikan 404.
 

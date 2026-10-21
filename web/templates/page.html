@@ -1,34 +1,14 @@
-{{define "page"}}<!doctype html>
-<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{.Title}}</title>
-{{if eq .Kind "submission"}}<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>{{end}}
-</head><body>
-<header><nav aria-label="Navigasi utama"><a href="/">Kamus Bahasa Lintang</a> · <a href="/daftar">Daftar kata</a> · <a href="/kirim">Kirim kata</a>
-{{if .User.ID}} · <a href="/admin/antrean">Antrean</a>{{if eq .User.Role "admin"}} · <a href="/admin/pengguna">Pengguna</a>{{end}}
-<form method="post" action="/admin/logout"><input type="hidden" name="csrf" value="{{.CSRF}}"><button>Keluar</button></form>{{end}}</nav></header>
-<main><h1>{{.Title}}</h1>
-{{if .Error}}<p role="alert">{{.Error}}</p>{{end}}
-{{if .Message}}<p role="status">{{.Message}}</p>{{end}}
-{{if eq .Kind "search"}}
-<p>Cari kata yang telah ditinjau oleh tim verifikator.</p>
-<form action="/cari"><label>Kata atau arti <input name="q" value="{{.Form.Get "q"}}" maxlength="1000"></label>
-<label>Arah <select name="arah"><option value="semua">Dua arah</option><option value="lintang" {{if eq (.Form.Get "arah") "lintang"}}selected{{end}}>Lintang ke Indonesia</option><option value="indonesia" {{if eq (.Form.Get "arah") "indonesia"}}selected{{end}}>Indonesia ke Lintang</option></select></label><button>Cari</button></form>
-{{template "results" .}}
-{{else if eq .Kind "list"}}{{template "results" .}}
-{{else if eq .Kind "detail"}}
-<p>Terverifikasi</p>
-<p>Ejaan: {{range .Data.Spellings}}{{.Form}}; {{end}}</p>
-{{range .Data.Senses}}<section><h2>{{.GlossID}}</h2><p>{{.Pos}}</p><p>{{.Explanation}}</p></section>{{end}}
-{{range .Data.Examples}}<blockquote>{{.TextLintang}}<p>{{.TextID}}</p></blockquote>{{end}}
-{{if .Data.Credits}}<p>Penyumbang: {{range .Data.Credits}}{{.}}; {{end}}</p>{{end}}
-{{else if eq .Kind "submission"}}
-<p>Kiriman akan ditinjau manusia sebelum masuk ke kamus.</p>
-<form method="post">{{template "content" .}}
-<p><label>Nama panggilan (opsional) <input name="name" maxlength="100" value="{{.Form.Get "name"}}"></label></p>
-<p><label>Kontak (opsional) <input name="contact" maxlength="254" value="{{.Form.Get "contact"}}"></label></p>
-<p><label><input type="checkbox" name="consent" {{if eq (.Form.Get "consent") "on"}}checked{{end}}> Saya bersedia nama saya dicantumkan sebagai penyumbang.</label></p>
-<div hidden><label>Biarkan kosong <input name="website" tabindex="-1" autocomplete="off"></label></div>
-<div class="cf-turnstile" data-sitekey="{{.SiteKey}}"></div><button>Kirim untuk ditinjau</button></form>
+{{define "page"}}<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0f1b3d"><title>{{.Title}} · Kamus Lintang</title><link rel="stylesheet" href="/static/app.css"><script src="/static/app.js" defer></script>{{if or .Home (eq .Kind "submission")}}<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>{{end}}</head><body>
+<a class="skip" href="#main">Lewati navigasi</a><header><div class="wrap nav"><a class="brand" href="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1 15 9 23 12 15 15 12 23 9 15 1 12 9 9Z"/></svg>Kamus Lintang</a><button class="menu" id="menu-button" type="button" aria-expanded="false" aria-controls="navigation">Menu</button><nav class="links" id="navigation" aria-label="Navigasi utama"><a href="/#kamus">Kamus</a><a href="/#kirim">Kirim kata</a><a href="/#tentang">Tentang</a>{{if .User.ID}}<a href="/admin/antrean">Antrean</a>{{if eq .User.Role "admin"}}<a href="/admin/pengguna">Pengguna</a>{{end}}<form method="post" action="/admin/logout"><input type="hidden" name="csrf" value="{{.CSRF}}"><button class="btn alt logout">Keluar</button></form>{{else}}<a class="btn alt" href="/admin/login">Masuk</a>{{end}}</nav></div></header>
+<main id="main">{{if .Home}}<div class="hero"><svg class="sky" aria-hidden="true" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid slice"><circle cx="323.8" cy="75.4" r="1.4" fill="#f2c14e" opacity=".55"/><circle cx="72.4" cy="267.9" r="1.0" fill="#cfd9ff" opacity=".55"/><circle cx="58.0" cy="253.7" r="0.5" fill="#cfd9ff" opacity=".55"/><circle cx="433.6" cy="34.9" r="0.5" fill="#cfd9ff" opacity=".55"/><circle cx="424.5" cy="413.4" r="0.6" fill="#cfd9ff" opacity=".55"/><circle cx="223.2" cy="313.7" r="1.9" fill="#cfd9ff" opacity=".55"/><circle cx="577.1" cy="198.3" r="2.0" fill="#cfd9ff" opacity=".55"/><circle cx="46.6" cy="429.2" r="0.9" fill="#cfd9ff" opacity=".55"/><circle cx="144.3" cy="58.9" r="0.9" fill="#cfd9ff" opacity=".55"/><circle cx="816.1" cy="90.4" r="1.3" fill="#f2c14e" opacity=".55"/><circle cx="638.9" cy="186.2" r="1.3" fill="#cfd9ff" opacity=".55"/><circle cx="62.8" cy="29.8" r="0.7" fill="#cfd9ff" opacity=".55"/><circle cx="680.4" cy="213.8" r="0.9" fill="#cfd9ff" opacity=".55"/><circle cx="585.6" cy="226.6" r="0.9" fill="#cfd9ff" opacity=".55"/><circle cx="794.4" cy="349.5" r="0.8" fill="#cfd9ff" opacity=".55"/><circle cx="574.4" cy="262.6" r="1.8" fill="#cfd9ff" opacity=".55"/><circle cx="729.4" cy="144.0" r="2.0" fill="#cfd9ff" opacity=".55"/><circle cx="118.1" cy="209.1" r="1.6" fill="#cfd9ff" opacity=".55"/><circle cx="152.0" cy="244.5" r="0.5" fill="#f2c14e" opacity=".55"/><circle cx="668.2" cy="382.3" r="1.3" fill="#cfd9ff" opacity=".55"/><circle cx="875.5" cy="156.9" r="1.5" fill="#cfd9ff" opacity=".55"/><circle cx="594.4" cy="289.9" r="1.1" fill="#cfd9ff" opacity=".55"/><circle cx="840.0" cy="472.3" r="1.2" fill="#cfd9ff" opacity=".55"/><circle cx="664.2" cy="30.3" r="1.5" fill="#cfd9ff" opacity=".55"/><circle cx="647.1" cy="496.5" r="1.7" fill="#cfd9ff" opacity=".55"/><circle cx="284.6" cy="192.9" r="1.5" fill="#cfd9ff" opacity=".55"/><circle cx="22.6" cy="230.8" r="0.7" fill="#cfd9ff" opacity=".55"/><circle cx="117.1" cy="29.5" r="1.6" fill="#f2c14e" opacity=".55"/><circle cx="129.3" cy="123.8" r="1.0" fill="#cfd9ff" opacity=".55"/><circle cx="871.4" cy="40.3" r="1.1" fill="#cfd9ff" opacity=".55"/><circle cx="549.4" cy="441.7" r="1.7" fill="#cfd9ff" opacity=".55"/><circle cx="864.0" cy="139.2" r="1.1" fill="#cfd9ff" opacity=".55"/><circle cx="358.8" cy="442.1" r="1.9" fill="#cfd9ff" opacity=".55"/><circle cx="150.9" cy="88.1" r="0.8" fill="#cfd9ff" opacity=".55"/><circle cx="233.3" cy="242.5" r="1.3" fill="#cfd9ff" opacity=".55"/><circle cx="262.7" cy="2.0" r="1.1" fill="#cfd9ff" opacity=".55"/><circle cx="369.3" cy="283.2" r="1.9" fill="#f2c14e" opacity=".55"/><circle cx="690.5" cy="257.7" r="1.4" fill="#cfd9ff" opacity=".55"/><circle cx="676.2" cy="27.0" r="1.8" fill="#cfd9ff" opacity=".55"/><circle cx="780.0" cy="437.3" r="1.7" fill="#cfd9ff" opacity=".55"/><circle cx="392.4" cy="199.5" r="0.6" fill="#cfd9ff" opacity=".55"/><circle cx="634.3" cy="31.1" r="0.5" fill="#cfd9ff" opacity=".55"/><circle cx="208.8" cy="81.2" r="0.9" fill="#cfd9ff" opacity=".55"/><circle cx="52.6" cy="0.1" r="0.6" fill="#cfd9ff" opacity=".55"/><circle cx="101.5" cy="181.8" r="0.4" fill="#cfd9ff" opacity=".55"/><circle cx="874.3" cy="307.0" r="0.6" fill="#f2c14e" opacity=".55"/><circle cx="252.3" cy="173.7" r="1.0" fill="#cfd9ff" opacity=".55"/><circle cx="122.8" cy="424.5" r="2.0" fill="#cfd9ff" opacity=".55"/><circle cx="466.0" cy="241.9" r="0.5" fill="#cfd9ff" opacity=".55"/><circle cx="102.2" cy="171.3" r="0.8" fill="#cfd9ff" opacity=".55"/><circle cx="828.9" cy="80.7" r="0.4" fill="#cfd9ff" opacity=".55"/><circle cx="951.0" cy="264.1" r="0.6" fill="#cfd9ff" opacity=".55"/><circle cx="543.2" cy="13.5" r="1.2" fill="#cfd9ff" opacity=".55"/><circle cx="978.5" cy="431.7" r="1.5" fill="#cfd9ff" opacity=".55"/><circle cx="261.1" cy="183.3" r="0.7" fill="#f2c14e" opacity=".55"/><circle cx="771.9" cy="266.3" r="1.6" fill="#cfd9ff" opacity=".55"/><circle cx="329.7" cy="111.5" r="1.7" fill="#cfd9ff" opacity=".55"/><circle cx="984.9" cy="426.3" r="1.7" fill="#cfd9ff" opacity=".55"/><circle cx="818.3" cy="369.9" r="0.8" fill="#cfd9ff" opacity=".55"/><circle cx="517.6" cy="177.8" r="0.4" fill="#cfd9ff" opacity=".55"/><circle cx="27.9" cy="139.7" r="0.8" fill="#cfd9ff" opacity=".55"/><circle cx="692.5" cy="478.3" r="1.1" fill="#cfd9ff" opacity=".55"/><circle cx="937.0" cy="494.0" r="1.9" fill="#cfd9ff" opacity=".55"/><circle cx="364.6" cy="110.2" r="0.8" fill="#f2c14e" opacity=".55"/><circle cx="196.7" cy="102.2" r="1.4" fill="#cfd9ff" opacity=".55"/><circle cx="900.3" cy="420.2" r="1.2" fill="#cfd9ff" opacity=".55"/><circle cx="653.0" cy="399.8" r="0.5" fill="#cfd9ff" opacity=".55"/><circle cx="660.6" cy="454.9" r="1.7" fill="#cfd9ff" opacity=".55"/><circle cx="750.1" cy="239.0" r="0.7" fill="#cfd9ff" opacity=".55"/><circle cx="789.1" cy="166.3" r="1.7" fill="#cfd9ff" opacity=".55"/></svg><div class="wrap"><h1>Kata-kata Lintang, ditulis oleh penuturnya.</h1><p>Kamus terbuka untuk bahasa Lintang. Cari arti sebuah kata, atau tambahkan kata yang Anda tahu. Tanpa akun.</p><form class="search" action="/cari" method="get" role="search"><input type="search" name="q" aria-label="Cari kata" placeholder="Ketik kata Lintang atau Indonesia" maxlength="1000"><input type="hidden" name="arah" value="semua"><button class="btn" type="submit">Cari kata</button></form><small>Cari dalam bahasa Lintang maupun bahasa Indonesia.</small></div></div><section id="tentang"><div class="wrap"><h2>Bahasa yang hidup di lisan, kini dicatat bersama.</h2><p class="lead">Setiap kata yang masuk ditinjau oleh penutur tepercaya sebelum tampil di kamus.</p><div class="stats"><div><b>1.000</b><span>kata terverifikasi (target 6 bulan)</span></div><div><b>30</b><span>penutur berkontribusi (target)</span></div><div><b>&lt; 7 hari</b><span>target waktu tinjau kiriman</span></div></div><div class="steps"><div><h3>Kirim tanpa akun</h3><p>Isi kata dan artinya. Nama dan kontak boleh dikosongkan.</p></div><div><h3>Ditinjau penutur</h3><p>Verifikator memeriksa kiriman sebelum diterbitkan. Varian ejaan tetap disimpan.</p></div><div><h3>Masuk kamus</h3><p>Kata yang diterima bisa dicari dua arah oleh siapa saja.</p></div></div></div></section><section class="section-tinted" id="kirim"><div class="wrap"><h2>Tahu kata Lintang yang belum ada?</h2><p class="lead">Tulis ejaan menurut cara Anda. Kiriman Anda tidak langsung tampil, melainkan ditinjau dulu.</p>{{template "submission-form" .}}</div></section><section id="kamus"><div class="wrap"><h2>Kamus</h2><p class="lead">Cari dua arah, atau telusuri menurut huruf awal.</p>{{template "dictionary" .}}<p class="note"><a href="/daftar">Lihat seluruh daftar kata</a></p></div></section>{{else}}<section class="page-section"><div class="wrap {{if or (eq .Kind "login") (eq .Kind "invitation")}}narrow{{end}}"><div class="section-heading"><h1>{{.Title}}</h1></div>
+{{if .Error}}<div class="notice error" role="alert">{{.Error}}</div>{{end}}{{if .Message}}<div class="notice" role="status">{{.Message}}</div>{{end}}
+<div class="{{if or (eq .Kind "login") (eq .Kind "invitation") (eq .Kind "queue") (eq .Kind "review") (eq .Kind "users")}}team-content{{end}}">
+{{if or (eq .Kind "search") (eq .Kind "list")}}<p class="lead">Cari kata yang telah ditinjau oleh tim verifikator.</p>{{template "dictionary" .}}
+{{else if eq .Kind "submission"}}<p class="lead">Tulis kata dan arti yang Anda ketahui. Kiriman akan ditinjau sebelum ditampilkan.</p>{{template "submission-form" .}}
+{{else if eq .Kind "message"}}<p><a class="btn" href="/kirim">Kirim kata lainnya</a> <a class="btn alt" href="/daftar">Buka kamus</a></p>
+{{else if eq .Kind "detail"}}<div class="detail"><a class="back" href="/daftar">← Kembali ke kamus</a><p><span class="tag v">Terverifikasi</span></p><p>Ejaan: {{range .Data.Spellings}}{{.Form}}; {{end}}</p>{{range .Data.Senses}}<section><h2>{{.GlossID}}</h2>{{if .Pos}}<p class="note">{{.Pos}}</p>{{end}}<p>{{.Explanation}}</p></section>{{end}}{{range .Data.Examples}}<blockquote>{{.TextLintang}}<p>{{.TextID}}</p></blockquote>{{end}}{{if .Data.Credits}}<p>Penyumbang: {{range .Data.Credits}}{{.}}; {{end}}</p>{{end}}</div>
 {{else if eq .Kind "login"}}
+<p class="lead">Khusus admin dan verifikator. Akun diaktifkan melalui undangan admin; pendaftaran publik tidak tersedia.</p>
 <form method="post"><input type="hidden" name="csrf" value="{{.CSRF}}">
 <p><label>Email <input name="email" type="email" autocomplete="username" required maxlength="254"></label></p>
 <p><label>Password <input name="password" type="password" autocomplete="current-password" required maxlength="256"></label></p><button>Masuk</button></form>
@@ -38,11 +18,11 @@
 <p><label>Password baru (minimal 12 karakter) <input name="password" type="password" autocomplete="new-password" minlength="12" maxlength="256" required></label></p><button>Aktifkan akun</button></form>
 {{else if eq .Kind "queue"}}
 <form><label>Cari kiriman <input name="q" value="{{.Form.Get "q"}}"></label>
-<label>Status <select name="status"><option value="pending">Menunggu</option><option value="approved">Diterima</option><option value="rejected">Ditolak</option><option value="needs_fix">Perlu perbaikan</option></select></label>
-<label>Urutan <select name="urutan"><option value="lama">Terlama</option><option value="baru">Terbaru</option></select></label><button>Tampilkan</button></form>
+<label>Status <select name="status"><option value="pending" {{if eq (.Form.Get "status") "pending"}}selected{{end}}>Menunggu</option><option value="approved" {{if eq (.Form.Get "status") "approved"}}selected{{end}}>Diterima</option><option value="rejected" {{if eq (.Form.Get "status") "rejected"}}selected{{end}}>Ditolak</option><option value="needs_fix" {{if eq (.Form.Get "status") "needs_fix"}}selected{{end}}>Perlu perbaikan</option></select></label>
+<label>Urutan <select name="urutan"><option value="lama">Terlama</option><option value="baru" {{if eq (.Form.Get "urutan") "baru"}}selected{{end}}>Terbaru</option></select></label><button>Tampilkan</button></form>
 <ul>{{range .Data}}<li><a href="/admin/kiriman/{{.ID}}">{{.Headword}}</a> — {{.GlossID}} ({{.Status}})</li>{{else}}<li>Tidak ada kiriman.</li>{{end}}</ul>
 {{else if eq .Kind "review"}}
-<p>Status: {{.Data.Status}}</p>
+<p class="note">Status: {{.Data.Status}}</p>
 <form method="post"><input type="hidden" name="csrf" value="{{.CSRF}}">{{template "content" .}}
 <p><label>Varian ejaan (pisahkan koma) <input name="variants" value="{{.Form.Get "variants"}}"></label></p>
 <p><label>ID entri tujuan (untuk gabung) <input type="number" name="target" min="1" value="{{.Form.Get "target"}}"></label></p>
@@ -60,15 +40,29 @@
 <p>{{.Name}} ({{.Email}})</p><label>Role <select name="role"><option value="verifier" {{if eq .Role "verifier"}}selected{{end}}>Verifikator</option><option value="admin" {{if eq .Role "admin"}}selected{{end}}>Admin</option></select></label>
 <label><input type="checkbox" name="active" {{if .IsActive}}checked{{end}}> Aktif</label><button>Simpan</button></form>{{end}}
 {{end}}
-{{if .Next}}<p><a href="{{.Next}}">Halaman berikutnya</a></p>{{end}}
-</main></body></html>{{end}}
-
-{{define "results"}}<ul>{{range .Data}}<li><a href="/kata/{{.Slug}}">{{.Headword}}</a> — {{.Gloss}}</li>{{else}}<li>Belum ada kata yang ditemukan.</li>{{end}}</ul>{{end}}
-{{define "content"}}
-<p><label>Kata Lintang <input name="headword" maxlength="60" required value="{{.Form.Get "headword"}}"></label></p>
-<p><label>Arti Indonesia <textarea name="gloss" maxlength="1000" required>{{.Form.Get "gloss"}}</textarea></label></p>
-<p><label>Penjelasan (opsional) <textarea name="explanation" maxlength="1000">{{.Form.Get "explanation"}}</textarea></label></p>
-<p><label>Jenis kata (opsional) <input name="pos" maxlength="60" value="{{.Form.Get "pos"}}"></label></p>
-<p><label>Contoh kalimat (opsional) <textarea name="example_lintang" maxlength="1000">{{.Form.Get "example_lintang"}}</textarea></label></p>
-<p><label>Arti contoh (opsional) <textarea name="example_id" maxlength="1000">{{.Form.Get "example_id"}}</textarea></label></p>
-{{end}}
+</div>{{if .Next}}<p class="pagination"><a class="btn alt" href="{{.Next}}">Halaman berikutnya →</a></p>{{end}}</div></section>{{end}}</main><footer><div class="wrap"><span>Kamus Lintang, kamus terbuka yang dibangun penuturnya.</span><nav class="footer-links" aria-label="Navigasi footer"><a href="/#tentang">Tentang</a><a href="/#kamus">Kamus</a><a href="/#kirim">Kirim kata</a></nav></div></footer></body></html>{{end}}{{define "content"}}
+<div class="formgrid">
+<p><label for="headword">Kata Lintang</label><input class="field" id="headword" name="headword" maxlength="60" required value="{{.Form.Get "headword"}}"></p>
+<p><label for="gloss">Arti dalam bahasa Indonesia</label><input class="field" id="gloss" name="gloss" maxlength="1000" required value="{{.Form.Get "gloss"}}"></p>
+<p class="full"><label for="explanation">Penjelasan <small>(opsional)</small></label><textarea class="field" id="explanation" name="explanation" maxlength="1000">{{.Form.Get "explanation"}}</textarea></p>
+<p><label for="example_lintang">Contoh kalimat <small>(opsional)</small></label><input class="field" id="example_lintang" name="example_lintang" maxlength="1000" value="{{.Form.Get "example_lintang"}}"></p>
+<p><label for="pos">Jenis kata <small>(opsional)</small></label><input class="field" id="pos" name="pos" maxlength="60" placeholder="Misalnya: kata benda" value="{{.Form.Get "pos"}}"></p>
+<p class="full"><label for="example_id">Arti contoh kalimat <small>(opsional)</small></label><input class="field" id="example_id" name="example_id" maxlength="1000" value="{{.Form.Get "example_id"}}"></p>
+</div>{{end}}
+{{define "submission-form"}}
+<form class="panel" action="/kirim" method="post">
+{{template "content" .}}
+<div class="formgrid form-actions">
+<p><label for="name">Nama panggilan <small>(opsional)</small></label><input class="field" id="name" name="name" maxlength="100" value="{{.Form.Get "name"}}"></p>
+<p><label for="contact">Kontak <small>(opsional, tidak ditampilkan)</small></label><input class="field" id="contact" name="contact" maxlength="254" value="{{.Form.Get "contact"}}"></p>
+<label class="check full"><input type="checkbox" name="consent" {{if eq (.Form.Get "consent") "on"}}checked{{end}}> <span>Cantumkan nama saya sebagai kontributor.</span></label>
+<div hidden><label>Biarkan kosong <input name="website" tabindex="-1" autocomplete="off"></label></div>
+<div class="full"><div class="cf-turnstile" data-sitekey="{{.SiteKey}}" data-theme="dark" data-size="flexible"></div><p class="note">Selesaikan verifikasi sebelum mengirim. Kiriman Anda akan ditinjau manusia.</p><noscript><p class="note">Verifikasi CAPTCHA membutuhkan JavaScript. Aktifkan JavaScript untuk mengirim kata.</p></noscript></div>
+<div class="full"><button class="btn dark" type="submit">Kirim untuk ditinjau</button></div>
+</div></form>{{end}}
+{{define "dictionary"}}
+<form class="search-panel" action="/cari" method="get" role="search">
+<label for="dictionary-query">Cari di kamus<input class="field" id="dictionary-query" type="search" name="q" value="{{.Form.Get "q"}}" placeholder="Kata Lintang atau arti Indonesia" maxlength="1000"></label>
+<label for="direction">Arah pencarian<select class="field" id="direction" name="arah"><option value="semua">Dua arah</option><option value="lintang" {{if eq (.Form.Get "arah") "lintang"}}selected{{end}}>Lintang → Indonesia</option><option value="indonesia" {{if eq (.Form.Get "arah") "indonesia"}}selected{{end}}>Indonesia → Lintang</option></select></label><button class="btn" type="submit">Cari kata</button>
+</form><nav class="letters" aria-label="Telusuri berdasarkan huruf">{{range .Alphabet}}<a href="/daftar/{{.}}" aria-label="Huruf {{.}}">{{.}}</a>{{end}}</nav>{{template "results" .}}{{end}}
+{{define "results"}}<div class="entry-list">{{range .Data}}<article class="entry"><h3><a href="/kata/{{.Slug}}">{{.Headword}}</a></h3><p class="gl">{{.Gloss}}</p><div class="tags"><span class="tag v">Terverifikasi</span></div></article>{{else}}<div class="empty"><h3>Belum ada kata yang ditemukan.</h3><p>Coba kata lain atau telusuri berdasarkan huruf awal.<br>Hanya kata yang telah ditinjau yang tampil di kamus.</p><a class="btn alt" href="/kirim">Kirim kata</a></div>{{end}}</div>{{end}}

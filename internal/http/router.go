@@ -43,6 +43,8 @@ type App struct {
 }
 
 type page struct {
+	Home                                             bool
+	Alphabet                                         []string
 	Kind, Title, Error, Message, CSRF, SiteKey, Next string
 	Data                                             any
 	Form                                             url.Values
@@ -60,6 +62,7 @@ func New(s *store.Store, c config.Config, service domain.SubmissionService, log 
 func (a *App) Handler() http.Handler {
 	r := chi.NewRouter()
 	r.Use(a.security)
+	r.Handle("/static/*", http.FileServer(http.FS(web.Assets)))
 	r.Get("/", a.search)
 	r.Get("/cari", a.search)
 	r.Get("/daftar", a.list)
@@ -89,9 +92,11 @@ func (a *App) Handler() http.Handler {
 func (a *App) security(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		a.requests.Add(1)
-		w.Header().Set("Content-Security-Policy", "default-src 'none'; script-src https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; style-src 'self'; img-src 'self'; connect-src 'self' https://challenges.cloudflare.com; form-action 'self'; base-uri 'none'; frame-ancestors 'none'")
+		w.Header().Set("Content-Security-Policy", "default-src 'none'; script-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'self' https://challenges.cloudflare.com; form-action 'self'; base-uri 'none'; frame-ancestors 'none'")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
-		w.Header().Set("Referrer-Policy", "no-referrer")
+		// Keep same-origin form POST origins available for the origin check while
+		// withholding referrers from external services, including CAPTCHA.
+		w.Header().Set("Referrer-Policy", "same-origin")
 		w.Header().Set("Strict-Transport-Security", "max-age=31536000")
 		w.Header().Set("Permissions-Policy", "microphone=(), camera=(), geolocation=()")
 		w.Header().Set("Cache-Control", "no-store")
@@ -198,6 +203,7 @@ func (a *App) requireAdmin(next http.Handler) http.Handler {
 	})
 }
 func (a *App) render(w http.ResponseWriter, r *http.Request, status int, p page) {
+	p.Alphabet = strings.Split("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "")
 	p.User = currentUser(r)
 	p.CSRF, _ = r.Context().Value(csrfKey).(string)
 	p.SiteKey = a.Config.SiteKey
@@ -273,7 +279,16 @@ func (a *App) search(w http.ResponseWriter, r *http.Request) {
 	if len(rows) < 20 {
 		next = ""
 	}
-	a.render(w, r, 200, page{Kind: "search", Title: "Kamus Bahasa Lintang", Data: rows, Form: r.URL.Query(), Next: next})
+	if r.URL.Path == "/" && query == "" {
+		entries, err := a.Store.Q.ListEntries(r.Context(), dbgen.ListEntriesParams{PageLimit: 20})
+		if err != nil {
+			a.fail(w, r, err)
+			return
+		}
+		a.render(w, r, 200, page{Home: true, Kind: "search", Title: "Kamus Lintang", Data: entries})
+		return
+	}
+	a.render(w, r, 200, page{Kind: "search", Title: "Kamus Lintang", Data: rows, Form: r.URL.Query(), Next: next})
 }
 func (a *App) list(w http.ResponseWriter, r *http.Request) {
 	offset, next := pagination(r)

@@ -150,9 +150,10 @@ make test-int      # tes integrasi (testcontainers-go + Postgres)
 make lint          # go vet (golangci-lint belum dikonfigurasi)
 make sec           # gosec + govulncheck
 make build         # build binary Go
+make css           # build Tailwind statis (npm ci sekali sebelum build)
 ```
 
-Target CSS belum tersedia; tampilan saat ini form SSR dasar untuk pengujian backend.
+Frontend SSR mengikuti referensi docs/fe.html dan docs/*.png. Build serta tes browser ada di FRONTEND.md.
 
 Jika ragu perintah mana yang berlaku, baca `Makefile` dan `deploy/docker-compose.yml`, jangan menebak.
 

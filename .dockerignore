@@ -7,5 +7,7 @@
 .codex
 .claude
 .agents
+node_modules
+.impeccable
 docs
 *.exe

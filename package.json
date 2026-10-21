@@ -1,0 +1,12 @@
+{
+  "name": "baso-lintang-ui",
+  "private": true,
+  "scripts": {
+    "css": "tailwindcss -i web/styles/app.css -o web/static/app.css --minify"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.1.18",
+    "tailwindcss": "4.1.18",
+    "playwright": "1.56.1"
+  }
+}

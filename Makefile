@@ -1,6 +1,6 @@
 GO ?= go
 
-.PHONY: dev migrate-up migrate-down sqlc test test-int lint sec build
+.PHONY: dev migrate-up migrate-down sqlc test test-int lint sec build css
 dev:
 	docker compose --env-file .env -f deploy/docker-compose.yml up --build
 migrate-up:
@@ -20,3 +20,5 @@ sec:
 	$(GO) run -modfile=tools/security/go.mod github.com/securego/gosec/v2/cmd/gosec -exclude-generated ./cmd/... ./internal/... ./db/... ./web/...
 build:
 	$(GO) build ./cmd/app
+css:
+	npm run css

@@ -1,0 +1,356 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-21T08:00:00Z",
+  "title": "Design System: Kamus Lintang",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Warm Star",
+        "canonical": "#f2c14e",
+        "tonalRamp": [
+          "#2b2008",
+          "#48350b",
+          "#664c10",
+          "#856416",
+          "#a47c1e",
+          "#c3952b",
+          "#e1ae3c",
+          "#f2c14e"
+        ]
+      },
+      "night": {
+        "role": "neutral",
+        "displayName": "Night Ink",
+        "canonical": "#0f1b3d",
+        "tonalRamp": [
+          "#080e1e",
+          "#0c1530",
+          "#101d40",
+          "#17274c",
+          "#243458",
+          "#39496a",
+          "#61708e",
+          "#e8edfa"
+        ]
+      },
+      "verified": {
+        "role": "tertiary",
+        "displayName": "Verified Teal",
+        "canonical": "#62c9b6",
+        "tonalRamp": [
+          "#0b211d",
+          "#10392f",
+          "#155243",
+          "#1c6b57",
+          "#25856c",
+          "#34a080",
+          "#49b99c",
+          "#62c9b6"
+        ]
+      },
+      "search-ink": {
+        "role": "neutral",
+        "displayName": "Search Ink",
+        "canonical": "#14203f",
+        "tonalRamp": [
+          "#e3e4e8",
+          "#d0d2d9",
+          "#b8bcc5",
+          "#a1a6b2",
+          "#8a909f",
+          "#72798c",
+          "#4f586f",
+          "#2b3652"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "Reading White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff"
+        ]
+      },
+      "sky-copy": {
+        "role": "neutral",
+        "displayName": "Sky Copy",
+        "canonical": "#c9d3f0",
+        "tonalRamp": [
+          "#f9fafd",
+          "#f4f6fc",
+          "#eff2fa",
+          "#e9edf9",
+          "#e4e9f8",
+          "#dfe5f6",
+          "#d6def4",
+          "#ced7f2"
+        ]
+      },
+      "star-hint": {
+        "role": "neutral",
+        "displayName": "Star Hint",
+        "canonical": "#9fb0e0",
+        "tonalRamp": [
+          "#f3f6fb",
+          "#eceff9",
+          "#e2e7f6",
+          "#d9dff3",
+          "#cfd8f0",
+          "#c5d0ec",
+          "#b7c4e8",
+          "#a9b8e3"
+        ]
+      },
+      "footer-copy": {
+        "role": "neutral",
+        "displayName": "Footer Copy",
+        "canonical": "#b8c4e8",
+        "tonalRamp": [
+          "#f6f8fc",
+          "#f1f3fa",
+          "#eaedf8",
+          "#e3e7f6",
+          "#dce2f4",
+          "#d4dcf1",
+          "#cad3ee",
+          "#bfcaea"
+        ]
+      },
+      "menu-line": {
+        "role": "neutral",
+        "displayName": "Menu Line",
+        "canonical": "#5b6aa0",
+        "tonalRamp": [
+          "#ebedf4",
+          "#dee1ec",
+          "#ced2e2",
+          "#bdc3d9",
+          "#adb4d0",
+          "#9da6c6",
+          "#848fb8",
+          "#6b79aa"
+        ]
+      },
+      "deep-copy": {
+        "role": "neutral",
+        "displayName": "Deep Copy",
+        "canonical": "#56627f",
+        "tonalRamp": [
+          "#ebecf0",
+          "#dde0e5",
+          "#ccd0d9",
+          "#bbc0cc",
+          "#aab0bf",
+          "#9aa1b2",
+          "#80899f",
+          "#67728c"
+        ]
+      },
+      "hover-blue": {
+        "role": "neutral",
+        "displayName": "Hover Blue",
+        "canonical": "#233363",
+        "tonalRamp": [
+          "#e5e7ec",
+          "#d3d6e0",
+          "#bdc2d0",
+          "#a7adc1",
+          "#9199b1",
+          "#7b85a1",
+          "#5a668a",
+          "#394773"
+        ]
+      },
+      "focus-blue": {
+        "role": "neutral",
+        "displayName": "Focus Blue",
+        "canonical": "#5f75a8",
+        "tonalRamp": [
+          "#eceef5",
+          "#dfe3ee",
+          "#cfd6e5",
+          "#bfc8dc",
+          "#afbad4",
+          "#9faccb",
+          "#8798be",
+          "#6f83b1"
+        ]
+      },
+      "success-surface": {
+        "role": "secondary",
+        "displayName": "Success Surface",
+        "canonical": "#133541",
+        "tonalRamp": [
+          "#e3e7e8",
+          "#d0d7d9",
+          "#b8c2c6",
+          "#a1aeb3",
+          "#899aa0",
+          "#71868d",
+          "#4e6870",
+          "#2b4954"
+        ]
+      },
+      "error-surface": {
+        "role": "secondary",
+        "displayName": "Error Surface",
+        "canonical": "#40233b",
+        "tonalRamp": [
+          "#e8e5e7",
+          "#d9d3d8",
+          "#c6bdc4",
+          "#b3a7b1",
+          "#a0919d",
+          "#8c7b89",
+          "#705a6c",
+          "#53394f"
+        ]
+      },
+      "error-line": {
+        "role": "secondary",
+        "displayName": "Error Line",
+        "canonical": "#f3a6a6",
+        "tonalRamp": [
+          "#fef4f4",
+          "#fdeded",
+          "#fbe4e4",
+          "#fadbdb",
+          "#f9d2d2",
+          "#f8caca",
+          "#f6bcbc",
+          "#f4afaf"
+        ]
+      },
+      "error-copy": {
+        "role": "secondary",
+        "displayName": "Error Copy",
+        "canonical": "#ffe0e0",
+        "tonalRamp": [
+          "#fffbfb",
+          "#fff9f9",
+          "#fff6f6",
+          "#fff3f3",
+          "#fff0f0",
+          "#ffecec",
+          "#ffe8e8",
+          "#ffe3e3"
+        ]
+      },
+      "action-hover": {
+        "role": "primary",
+        "displayName": "Action Hover",
+        "canonical": "#ffcf63",
+        "tonalRamp": [
+          "#fff9ec",
+          "#fff5e0",
+          "#fff1d0",
+          "#ffecc1",
+          "#ffe7b1",
+          "#ffe2a1",
+          "#ffdb8a",
+          "#ffd473"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Bricolage Grotesque",
+        "purpose": "Headings and the brand wordmark."
+      },
+      "body": {
+        "displayName": "Source Sans 3",
+        "purpose": "Paragraphs, form labels, and reading content."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Disable authored animation and smooth scrolling when requested."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone-layout",
+        "value": "600px"
+      },
+      {
+        "name": "single-column-forms",
+        "value": "700px"
+      },
+      {
+        "name": "mobile-navigation",
+        "value": "760px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary search, send, and team actions.",
+      "html": "<button class=\"ds-btn-primary\">Cari kata</button>",
+      "css": ".ds-btn-primary { background: #f2c14e; color: #0f1b3d; padding: 11px 20px; border: 0; border-radius: 10px; font-weight: 600; } .ds-btn-primary:hover { background: #ffcf63; } .ds-btn-primary:focus-visible { outline: 3px solid #f2c14e; outline-offset: 2px; }"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Search and form control on the dark reading surface.",
+      "html": "<label class=\"ds-input-label\">Cari di kamus<input class=\"ds-input-field\" type=\"search\"></label>",
+      "css": ".ds-input-label { color: #e8edfa; font-weight: 600; } .ds-input-field { display: block; width: 100%; margin-top: 6px; padding: 12px 14px; border: 1.5px solid #26366b; border-radius: 10px; background: #0a1330; color: #e8edfa; } .ds-input-field:focus-visible { outline: 3px solid #f2c14e; outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Penutur's Open Dictionary",
+    "overview": "A calm, night-sky reading space lets people search first and contribute without an account. The dark blue field gives long-form Indonesian text a steady home; warm yellow marks the main action, while teal is reserved for verified status. This visual system supports community review without presenting unreviewed submissions as established knowledge.",
+    "keyCharacteristics": [
+      "Search and contribution remain prominent at phone widths.",
+      "A locally hosted display and body face give headings character while keeping paragraphs easy to read.",
+      "Verification is identified with restrained teal labels.",
+      "Decorative stars are limited to the hero; the remaining surfaces are flat and quiet."
+    ],
+    "rules": [
+      {
+        "name": "The Public-State Rule",
+        "body": "A verified tag belongs only to published entries; pending submissions stay in the review workflow.",
+        "section": "overview"
+      },
+      {
+        "name": "The Status Color Rule",
+        "body": "Teal denotes verification; yellow denotes an action or focus.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Voice Rule",
+        "body": "Use the display face for headings and the body face for instructions, labels, and definitions.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Surface Rule",
+        "body": "Use tonal contrast and borders to separate content; do not add decorative shadows.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep the search and send-word actions easy to find at phone widths.",
+      "Do use teal only for verified status and yellow for actions or focus.",
+      "Do preserve the flat blue surfaces and readable local font pairing."
+    ],
+    "donts": [
+      "Don't style pending submissions as verified dictionary entries.",
+      "Don't add decorative shadows or external font and analytics services.",
+      "Don't fill the dictionary with illustrative language presented as real Lintang vocabulary."
+    ]
+  }
+}
